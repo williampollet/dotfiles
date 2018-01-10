@@ -59,11 +59,7 @@ alias be='bundle exec'
 alias dlsassymaps='cd ~/Developer/repos/kisskissbankbank/client/node_modules/kitten-components/vendor/assets/stylesheets/kitten/sassy-maps && npm install'
 alias aliasline='echo "\e[1;35m------------------------------------------------------------\e[0m"'
 alias boot='cd ~/Developer/dotfiles && osascript ./boot.scpt'
-
-# Env boot2docker
-# export DOCKER_MACHINE_NAME=default
-# export DOCKER_CERT_PATH=~/.docker/machine/machines/default
-# export DOCKER_TLS_VERIFY=1
+alias delete-squashed-branches='python ~/Developer/dotfiles/delete-squashed-branches'
 
 function ls ()
 {
