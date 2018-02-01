@@ -26,6 +26,7 @@
   fo = fetch origin
   d = !git --no-pager diff
   dt  = difftool
+	f = !~/bin/git-fetch-and-delete
   stat = !git --no-pager diff --stat
   clean-branches = !git branch | egrep -v '(master|\\*)' | xargs git branch -D
 

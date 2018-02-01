@@ -24,6 +24,7 @@ import os.path
 import re
 import subprocess
 import sys
+from datetime import datetime
 
 from github import Github
 
@@ -34,7 +35,7 @@ DRY_RUN = len(sys.argv) > 1 and sys.argv[1] == '--dry-run'
 def get_branch_heads():
     '''Returns a map from branch name --> SHA for local branches.'''
     branch_to_sha = {}
-    for path in glob('.git/refs/heads/*'):
+    for path in glob('.git/refs/heads/*/*'):
         branch = os.path.basename(path)
         if branch == 'master': continue
         branch_to_sha[branch] = open(path).read().strip()
@@ -116,13 +117,16 @@ sys.stderr.write('Finding local branches which were merged onto %s via GitHub...
 
 
 org, repo = get_github_remote()
+sys.stderr.write('%s \n' % org)
 g = github()
 repo = g.get_user(org).get_repo(repo)
 
-merged_shas = [
-    pr.head.sha
-    for pr in repo.get_pulls(state='closed')
-    if pr.merged and pr.base.ref == target_branch]
+merged_shas = []
+
+for pr in repo.get_pulls(state='closed'):
+    if pr.assignee and pr.assignee.login == 'williampollet' and pr.merged and pr.base.ref == target_branch:
+        sys.stderr.write('%s \n' % pr.head.sha)
+        merged_shas.append(pr.head.sha)
 
 for branch, sha in get_branch_heads().items():
     if sha in merged_shas:
