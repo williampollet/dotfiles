@@ -23,6 +23,7 @@
   st = status -sb
   br = branch
   ci = commit
+	p = pull --rebase
   fo = fetch origin
   d = !git --no-pager diff
   dt  = difftool
@@ -58,3 +59,6 @@
 	process = git-lfs filter-process
 	required = true
 	clean = git-lfs clean -- %f
+
+[commit]
+	template = .gitmessage
