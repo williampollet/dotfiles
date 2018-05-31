@@ -51,7 +51,8 @@ alias pm='git pull origin master'
 alias telex='ssh william_pollet@52.30.18.32'
 alias kisskissprod='ssh william_pollet@54.77.166.28'
 alias lendoprod='ssh william_pollet@54.171.33.208'
-alias lintpush='a && c "lint" && push'
+alias clint= 'a && c "lint"'
+alias pushlint='a && c "lint" && push'
 alias kisskiss='cd ~/Developer/repos/kisskissbankbank'
 alias gringotts='cd ~/Developer/repos/gringotts'
 alias lendo='cd ~/Developer/repos/kkbb-lendopolis'
@@ -76,6 +77,23 @@ function ls ()
    pwd
    aliasline
 }
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NORMAL='\033[0m'
+
+function ppush ()
+{
+  be pronto run --exit-code
+  if [ $? -eq 2 ]; then
+    print "${RED}Pronto found somme errors... Fix them before pushing to master!${NORMAL}"
+    return 1
+  else
+    print "${GREEN}No errors found by pronto, pushing to github!${NORMAL}"
+  fi
+  push
+}
+
 export BUNDLER_EDITOR="'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'"
 export PATH="/usr/local/opt/mysql@5.5/bin:$PATH"
 export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
