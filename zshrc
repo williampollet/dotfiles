@@ -51,7 +51,8 @@ alias pm='git pull origin master'
 alias telex='ssh william_pollet@52.30.18.32'
 alias kisskissprod='ssh william_pollet@54.77.166.28'
 alias lendoprod='ssh william_pollet@54.171.33.208'
-alias clint= 'a && c "lint"'
+alias clint='a && c "lint"'
+alias gpom='git pull origin master'
 alias pushlint='a && c "lint" && push'
 alias kisskiss='cd ~/Developer/repos/kisskissbankbank'
 alias gringotts='cd ~/Developer/repos/gringotts'
@@ -85,7 +86,7 @@ NORMAL='\033[0m'
 function ppush ()
 {
   be pronto run --exit-code
-  if [ $? -eq 2 ]; then
+  if [ $? != 0 ]; then
     print "${RED}Pronto found somme errors... Fix them before pushing to master!${NORMAL}"
     return 1
   else
