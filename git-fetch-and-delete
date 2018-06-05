@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+deleted_branches =
+  `git remote prune origin && git branch -vv | grep 'origin/.*: gone]' | grep -v 'master$' | awk '{print $1}'`
+    .split("\n")
+    .select { |branch| system("git rev-parse --verify #{branch} > /dev/null 2>&1") }
+
+deleted_branches.each do |branch|
+  print "Delete #{branch}? Y/n "
+  response = gets.chomp.to_s.downcase
+  puts `git branch -D #{branch}` if ['', 'y'].include?(response)
+end
+
+system 'git fetch --all --tags --prune'
