@@ -1,15 +1,19 @@
 {
-  "installed_packages":
-  [
-    "AdvancedNewFile",
-    "All Autocomplete",
-    "ApplySyntax",
-    "Babel",
-    "Emmet",
-    "Git",
-    "GitGutter",
-    "Package Control",
-    "SCSS",
-    "ERB Snippets"
-  ]
+	"bootstrapped": true,
+	"in_process_packages":
+	[
+	],
+	"installed_packages":
+	[
+		"AdvancedNewFile",
+		"All Autocomplete",
+		"ApplySyntax",
+		"Babel",
+		"Emmet",
+		"Git",
+		"GitGutter",
+		"Package Control",
+		"SCSS",
+		"ERB Snippets"
+	]
 }

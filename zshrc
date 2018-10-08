@@ -17,7 +17,7 @@ export DB_HOST_ADDR=192.168.59.103
 export DB_HOST_PORT=5432
 export API_REDIS_1_PORT_6379_TCP_ADDR=127.0.0.1
 export API_REDIS_1_PORT_6379_TCP_PORT=6379
-. "/usr/local/opt/nvm/nvm.sh"
+
 # Actually load Oh-My-Zsh
 source "${ZSH}/oh-my-zsh.sh"
 
@@ -51,6 +51,7 @@ alias pm='git pull origin master'
 alias telex='ssh william_pollet@52.30.18.32'
 alias kisskissprod='ssh william_pollet@34.246.225.85'
 alias lendoprod='ssh william_pollet@54.171.33.208'
+alias gringottsprod='ssh william_pollet@52.213.67.205'
 alias clint='a && c "lint"'
 alias gpom='git pull origin master'
 alias pushlint='a && c "lint" && push'
@@ -71,6 +72,8 @@ alias dlsassymaps='cd ~/Developer/repos/kisskissbankbank/client/node_modules/kit
 alias aliasline='echo "\e[1;35m------------------------------------------------------------\e[0m"'
 alias boot='cd ~/Developer/dotfiles && osascript ./boot.scpt'
 alias delete-squashed-branches='python ~/Developer/dotfiles/delete-squashed-branches'
+alias lightboot='cd ~/Developer/dotfiles && osascript ./lightboot.scpt'
+alias stashtrads='git checkout config/locales/'
 
 function ls ()
 {
@@ -95,10 +98,23 @@ function ppush ()
   else
     print "${GREEN}No errors found by pronto, pushing to github!${NORMAL}"
   fi
-  push
+
+  git push origin
+
+  if [ $? == 128 ]; then
+    print "${GREEN}Syncing with github...${NORMAL}"
+
+    git push --set-upstream origin $(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
+  fi
 }
 
 export BUNDLER_EDITOR="'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'"
 export PATH="/usr/local/opt/mysql@5.5/bin:$PATH"
 export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
 export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
+
+export NVM_DIR="${HOME}/.nvm"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
