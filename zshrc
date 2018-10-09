@@ -105,6 +105,10 @@ function ppush ()
     print "${GREEN}Syncing with github...${NORMAL}"
 
     git push --set-upstream origin $(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
+
+    if [ $? == 0 ]; then
+      open "https://github.com/KissKissBankBank/kisskissbankbank/pull/new/$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)"
+    fi
   fi
 }
 
