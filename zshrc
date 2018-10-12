@@ -91,14 +91,26 @@ NORMAL='\033[0m'
 
 function ppush ()
 {
-  be pronto run --exit-code
-  if [ $? != 0 ]; then
-    print "${RED}Pronto found somme errors... Fix them before pushing to master!${NORMAL}"
+  prontorun
+  pushandpr
+}
+
+
+function ppushtest ()
+{
+  prontorun
+  spec-or-create
+  pushandpr
+}
+
+function pushandpr ()
+{
+  if [ $? == 1 ]; then
     return 1
-  else
-    print "${GREEN}No errors found by pronto, pushing to github!${NORMAL}"
   fi
 
+  print ''
+  print "### Pushing to Github ###"
   git push origin
 
   if [ $? == 128 ]; then
@@ -109,6 +121,38 @@ function ppush ()
     if [ $? == 0 ]; then
       open "https://github.com/KissKissBankBank/kisskissbankbank/pull/new/$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)"
     fi
+  fi
+}
+
+function prontorun ()
+{
+  print ''
+  print "### Running pronto... ###"
+  be pronto run --exit-code
+
+  if [ $? != 0 ]; then
+    print "${RED}Pronto found somme errors... Fix them before pushing to master!${NORMAL}"
+    return 1
+  else
+    print "${GREEN}No errors found by pronto, go for next step!${NORMAL}"
+  fi
+}
+
+function spec-or-create ()
+{
+  if [ $? == 1 ]; then
+    return 1
+  fi
+
+  print ''
+  print "### Testing new files... ###"
+  ruby ~/Developer/dotfiles/rspecer.rb
+
+  if [ $? == 1 ]; then
+    print "${RED}Oops, a spec seems to be red or empty, be sure to complete it before you push${NORMAL}"
+    return 1
+  else
+    print "${GREEN}Every spec operational, passing to the next step!${NORMAL}"
   fi
 }
 
