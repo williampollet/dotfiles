@@ -5,7 +5,7 @@ if new_files.map{ |f| f.match(/app\/interactors/) }.any?
 end
 
 new_files.each do |f|
-  if f.match(/app\/interactors/)
+  if f.match(/app\/interactors/) || f.match(/app\/models/)
     spec_path = f.gsub('app/', 'spec/').gsub('.rb', '_spec.rb')
 
     if File.exists?(spec_path)
