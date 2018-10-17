@@ -16,6 +16,7 @@ new_files.each do |f|
       puts "spec found for file #{f}, running zeus test #{spec_path}"
       system("zeus test #{spec_path}")
       raise 'spec failed!' if $?.exitstatus == 1
+      raise 'Oops, the spec has been skipped by zeus' if $?.exitstatus == 123
     else
       puts "no spec found for file #{f}, creating spec at #{spec_path}"
       class_name = File.basename(f).gsub('.rb', '').split('_').map(&:capitalize).join
@@ -29,5 +30,6 @@ new_files.each do |f|
   # scan for new specs
     system("zeus test #{f}")
     raise 'spec failed!' if $?.exitstatus == 1
+    raise 'Oops, the spec has been skipped by zeus' if $?.exitstatus == 123
   end
 end
