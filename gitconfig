@@ -1,6 +1,7 @@
 [user]
 	name = William Pollet
 	email = william.pollet@kisskissbankbank.com
+	signingkey = 0B882BFEA37842D4
 
 [color]
   branch = auto

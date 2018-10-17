@@ -1,17 +1,21 @@
-new_files = `git diff --name-status master | grep "^A" | cut -c 3-`.split("\n")
+new_files = `git diff --name-status master | cut -c 3-`.split("\n")
 
-if new_files.map{ |f| f.match(/app\/interactors/) }.any?
-  puts "new files found, searching for specs."
-end
+specs_to_skip = []
 
 new_files.each do |f|
-  if f.match(/app\/interactors/) || f.match(/app\/models/)
+  if f.match(/app\/interactors/) || f.match(/app\/models/) || f.match(/app\/mails/)
+    # Scan for interactors or models
+
+    puts "New file found, searching for specs..."
+
     spec_path = f.gsub('app/', 'spec/').gsub('.rb', '_spec.rb')
+
+    specs_to_skip << spec_path
 
     if File.exists?(spec_path)
       puts "spec found for file #{f}, running zeus test #{spec_path}"
       system("zeus test #{spec_path}")
-      raise 'spec failed!' if $?.exitstatus != 0
+      raise 'spec failed!' if $?.exitstatus == 1
     else
       puts "no spec found for file #{f}, creating spec at #{spec_path}"
       class_name = File.basename(f).gsub('.rb', '').split('_').map(&:capitalize).join
@@ -21,5 +25,9 @@ new_files.each do |f|
       end
       raise 'spec to write!'
     end
+  elsif f.match(/spec/) && !specs_to_skip.include?(f)
+  # scan for new specs
+    system("zeus test #{f}")
+    raise 'spec failed!' if $?.exitstatus == 1
   end
 end
