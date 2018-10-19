@@ -156,6 +156,12 @@ function spec-or-create ()
   fi
 }
 
+function test-or-create ()
+{
+  print "### Testing new files... ###"
+  ruby ~/Developer/dotfiles/rspecer.rb
+}
+
 export BUNDLER_EDITOR="'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'"
 export PATH="/usr/local/opt/mysql@5.5/bin:$PATH"
 export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"

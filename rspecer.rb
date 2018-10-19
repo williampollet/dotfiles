@@ -1,35 +1,66 @@
-new_files = `git diff --name-status master | cut -c 3-`.split("\n")
+aiclass ModifiedFiles
+  def initialize(test_command:)
+    @modified_files = `git diff --name-status master | cut -c 3-`.split("\n")
+    @test_command = test_command
+    @specs_to_execute = []
+  end
 
-specs_to_skip = []
+  def call
+    list_files_to_execute
+    run_specs
+  end
 
-new_files.each do |f|
-  if f.match(/app\/interactors/) || f.match(/app\/models/) || f.match(/app\/mails/)
-    # Scan for interactors or models
+  private
 
-    puts "New file found, searching for specs..."
+  attr_reader :modified_files, :specs_to_execute, :test_command
 
-    spec_path = f.gsub('app/', 'spec/').gsub('.rb', '_spec.rb')
-
-    specs_to_skip << spec_path
-
-    if File.exists?(spec_path)
-      puts "spec found for file #{f}, running zeus test #{spec_path}"
-      system("zeus test #{spec_path}")
-      raise 'spec failed!' if $?.exitstatus == 1
-      raise 'Oops, the spec has been skipped by zeus' if $?.exitstatus == 123
-    else
-      puts "no spec found for file #{f}, creating spec at #{spec_path}"
-      class_name = File.basename(f).gsub('.rb', '').split('_').map(&:capitalize).join
-      template = "require \'rails_helper\'\n\nRSpec.describe #{class_name} do\nend"
-      f = File.open(spec_path, 'w') do |file|
-        file.write(template)
-      end
-      raise 'spec to write!'
+  def list_files_to_execute
+    modified_files.each do |f|
+      analize_file(f)
     end
-  elsif f.match(/spec/) && !specs_to_skip.include?(f)
-  # scan for new specs
-    system("zeus test #{f}")
-    raise 'spec failed!' if $?.exitstatus == 1
-    raise 'Oops, the spec has been skipped by zeus' if $?.exitstatus == 123
+  end
+
+  def analize_file(f)
+    if f.match(files_to_match)
+      puts "New file found, searching for specs..."
+
+      spec_path = f.gsub('app/', 'spec/').gsub('.rb', '_spec.rb')
+
+      if File.exists?(spec_path)
+        puts "spec found for file #{f}, putting #{spec_path} in the list of specs to run"
+        specs_to_execute << spec_path
+      else
+        create_new_spec(spec_path, f)
+      end
+    elsif f.match(/spec/) && !specs_to_execute.include?(f)
+      puts "new spec found, putting #{f} in the list of specs to run"
+      specs_to_execute << f
+    end
+  end
+
+  def run_specs
+    return if specs_to_execute.empty?
+
+    system("#{test_command} #{specs_to_execute.join(' ')}")
+    raise 'spec failed or skipped!' if $?.exitstatus != 0
+  end
+
+  def create_new_spec(spec_path, f)
+    puts "no spec found for file #{f}, creating spec at #{spec_path}"
+    f = File.open(spec_path, 'w') do |file|
+      file.write(template(spec_path))
+    end
+    raise 'spec to write!'
+  end
+
+  def template(spec_path)
+    class_name = File.basename(spec_path).gsub('_spec.rb', '').split('_').map(&:capitalize).join
+    template = "require \'rails_helper\'\n\nRSpec.describe #{class_name} do\nend"
+  end
+
+  def files_to_match
+    /app\/interactors\/|app\/models|app\/mails\/|app\/graph\/mutations\/|app\/graph\/types\/|app\/forms\//
   end
 end
+
+ModifiedFiles.new(test_command: 'zeus test').call
