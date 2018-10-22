@@ -1,22 +1,31 @@
-aiclass ModifiedFiles
+class ModifiedFiles
   def initialize(test_command:)
-    @modified_files = `git diff --name-status master | cut -c 3-`.split("\n")
+    @modified_files = `git diff --name-status master | egrep -h "^M|^A" | cut -c 3-`.split("\n")
+    @moved_files = `git diff --name-status master | egrep -h "^R"`.split("\n")
     @test_command = test_command
     @specs_to_execute = []
   end
 
   def call
     list_files_to_execute
+    list_moved_files_to_execute
     run_specs
   end
 
   private
 
-  attr_reader :modified_files, :specs_to_execute, :test_command
+  attr_reader :modified_files, :specs_to_execute, :test_command, :moved_files
 
   def list_files_to_execute
     modified_files.each do |f|
       analize_file(f)
+    end
+  end
+
+  def list_moved_files_to_execute
+    moved_files.each do |f|
+      file = f.split("\t").last
+      analize_file(file)
     end
   end
 
@@ -59,7 +68,7 @@ aiclass ModifiedFiles
   end
 
   def files_to_match
-    /app\/interactors\/|app\/models|app\/mails\/|app\/graph\/mutations\/|app\/graph\/types\/|app\/forms\//
+    /app\/interactors\/|app\/models|app\/mails\/|app\/graph\/mutations\/|app\/graph\/types\/|app\/forms\/|app\/apis\/|app\/proppers\//
   end
 end
 
