@@ -1,9 +1,8 @@
 class AnalyzeModifiedFiles
-  def initialize(test_command:, directories_to_match:)
+  def initialize(test_command:)
     @modified_files = `git diff --name-status master | egrep -h "^M|^A" | cut -c 3-`.split("\n")
     @moved_files = `git diff --name-status master | egrep -h "^R"`.split("\n")
     @test_command = test_command
-    @directories_to_match = 'app/*'
     @specs_to_execute = []
   end
 
@@ -15,8 +14,7 @@ class AnalyzeModifiedFiles
 
   private
 
-  attr_reader :modified_files, :specs_to_execute, :test_command, :moved_files,
-              :directories_to_match
+  attr_reader :modified_files, :specs_to_execute, :test_command, :moved_files
 
   def list_files_to_execute
     modified_files.each do |f|
@@ -32,7 +30,7 @@ class AnalyzeModifiedFiles
   end
 
   def analyze_file(f)
-    if f.match(files_to_match)
+    if f.match(/app\/.*\.rb$/)
       puts "New file found, searching for specs..."
 
       spec_path = f.gsub('app/', 'spec/').gsub('.rb', '_spec.rb')
@@ -73,10 +71,6 @@ class AnalyzeModifiedFiles
   def template(spec_path)
     class_name = File.basename(spec_path).gsub('_spec.rb', '').split('_').map(&:capitalize).join
     template = "require \'rails_helper\'\n\nRSpec.describe #{class_name} do\nend"
-  end
-
-  def files_to_match
-    Regexp.new(directories_to_match)
   end
 end
 
