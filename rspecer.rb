@@ -3,7 +3,7 @@ class AnalyzeModifiedFiles
     @modified_files = `git diff --name-status master | egrep -h "^M|^A" | cut -c 3-`.split("\n")
     @moved_files = `git diff --name-status master | egrep -h "^R"`.split("\n")
     @test_command = test_command
-    @directories_to_match = directories_to_match
+    @directories_to_match = 'app/*'
     @specs_to_execute = []
   end
 
@@ -57,11 +57,17 @@ class AnalyzeModifiedFiles
   end
 
   def create_new_spec(spec_path, f)
-    puts "no spec found for file #{f}, creating spec at #{spec_path}"
-    f = File.open(spec_path, 'w') do |file|
-      file.write(template(spec_path))
+    puts "no spec found for file #{f}, would you like to add #{spec_path}? (Yn)"
+    result = gets.chomp
+
+    if result.downcase == 'n'
+      puts 'Alright, skipping the test for now!'
+    else
+      f = File.open(spec_path, 'w') do |file|
+        file.write(template(spec_path))
+      end
+      raise 'spec to write!'
     end
-    raise 'spec to write!'
   end
 
   def template(spec_path)
@@ -70,23 +76,8 @@ class AnalyzeModifiedFiles
   end
 
   def files_to_match
-    Regexp.new(directories_to_match.join('|'))
+    Regexp.new(directories_to_match)
   end
 end
 
-directories_to_match = [
-  'app/interactors/',
-  'app/models',
-  'app/mails',
-  'app/graph/mutations',
-  'app/graph/types',
-  'app/forms',
-  'app/apis',
-  'app/proppers',
-  'app/workers',
-]
-
-AnalyzeModifiedFiles.new(
-  test_command: 'zeus test',
-  directories_to_match: directories_to_match
-).call
+AnalyzeModifiedFiles.new(test_command: 'zeus test').call
