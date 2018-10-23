@@ -1,8 +1,9 @@
-class ModifiedFiles
-  def initialize(test_command:)
+class AnalyzeModifiedFiles
+  def initialize(test_command:, directories_to_match:)
     @modified_files = `git diff --name-status master | egrep -h "^M|^A" | cut -c 3-`.split("\n")
     @moved_files = `git diff --name-status master | egrep -h "^R"`.split("\n")
     @test_command = test_command
+    @directories_to_match = directories_to_match
     @specs_to_execute = []
   end
 
@@ -15,21 +16,22 @@ class ModifiedFiles
   private
 
   attr_reader :modified_files, :specs_to_execute, :test_command, :moved_files
+              :directories_to_match
 
   def list_files_to_execute
     modified_files.each do |f|
-      analize_file(f)
+      analyze_file(f)
     end
   end
 
   def list_moved_files_to_execute
     moved_files.each do |f|
       file = f.split("\t").last
-      analize_file(file)
+      analyze_file(file)
     end
   end
 
-  def analize_file(f)
+  def analyze_file(f)
     if f.match(files_to_match)
       puts "New file found, searching for specs..."
 
@@ -68,8 +70,23 @@ class ModifiedFiles
   end
 
   def files_to_match
-    /app\/interactors\/|app\/models|app\/mails\/|app\/graph\/mutations\/|app\/graph\/types\/|app\/forms\/|app\/apis\/|app\/proppers\//
+    Regexp.new(directories_to_match.join('|'))
   end
 end
 
-ModifiedFiles.new(test_command: 'zeus test').call
+directories_to_match = [
+  'app/interactors/',
+  'app/models',
+  'app/mails',
+  'app/graph/mutations',
+  'app/graph/types',
+  'app/forms',
+  'app/apis',
+  'app/proppers',
+  'app/workers',
+]
+
+AnalyzeModifiedFiles.new(
+  test_command: 'zeus test',
+  directories_to_match: directories_to_match
+).call

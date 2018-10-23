@@ -109,8 +109,9 @@ function pushandpr ()
     return 1
   fi
 
-  print ''
-  print "### Pushing to Github ###"
+  print '##########################'
+  print "## Pushing to Github... ##"
+  print '##########################'
   git push origin
 
   if [ $? == 128 ]; then
@@ -126,8 +127,10 @@ function pushandpr ()
 
 function prontorun ()
 {
-  print ''
-  print "### Running pronto... ###"
+  print '#######################'
+  print "## Running pronto... ##"
+  print '#######################'
+
   be pronto run --exit-code
 
   if [ $? != 0 ]; then
@@ -144,8 +147,9 @@ function spec-or-create ()
     return 1
   fi
 
-  print ''
-  print "### Testing new files... ###"
+  print '##########################'
+  print '## Testing new files... ##'
+  print '##########################'
   ruby ~/Developer/dotfiles/rspecer.rb
 
   if [ $? == 1 ]; then
@@ -158,7 +162,10 @@ function spec-or-create ()
 
 function test-or-create ()
 {
-  print "### Testing new files... ###"
+  print '##########################'
+  print "## Testing new files... ##"
+  print '##########################'
+
   ruby ~/Developer/dotfiles/rspecer.rb
 }
 
