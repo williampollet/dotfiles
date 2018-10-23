@@ -15,7 +15,7 @@ class AnalyzeModifiedFiles
 
   private
 
-  attr_reader :modified_files, :specs_to_execute, :test_command, :moved_files
+  attr_reader :modified_files, :specs_to_execute, :test_command, :moved_files,
               :directories_to_match
 
   def list_files_to_execute
