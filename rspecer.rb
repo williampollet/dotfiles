@@ -1,9 +1,10 @@
 class AnalyzeModifiedFiles
-  def initialize(test_command:)
+  def initialize(test_command:, create_specs: true)
     @modified_files = `git diff --name-status master | egrep -h "^M|^A" | cut -c 3-`.split("\n")
     @moved_files = `git diff --name-status master | egrep -h "^R"`.split("\n")
     @test_command = test_command
     @specs_to_execute = []
+    @create_specs = create_specs
   end
 
   def call
@@ -14,7 +15,8 @@ class AnalyzeModifiedFiles
 
   private
 
-  attr_reader :modified_files, :specs_to_execute, :test_command, :moved_files
+  attr_reader :modified_files, :specs_to_execute, :test_command, :moved_files,
+              :create_specs
 
   def list_files_to_execute
     modified_files.each do |f|
@@ -41,7 +43,7 @@ class AnalyzeModifiedFiles
       else
         create_new_spec(spec_path, f)
       end
-    elsif f.match(/spec/) && !specs_to_execute.include?(f)
+    elsif f.match(/spec\/(?!factories)/) && !specs_to_execute.include?(f)
       puts "new spec found, putting #{f} in the list of specs to run"
       specs_to_execute << f
     end
@@ -55,6 +57,8 @@ class AnalyzeModifiedFiles
   end
 
   def create_new_spec(spec_path, f)
+    return unless create_specs
+
     puts "no spec found for file #{f}, would you like to add #{spec_path}? (Yn)"
     result = gets.chomp
 
