@@ -127,6 +127,10 @@ function pushandpr ()
 
 function prontorun ()
 {
+  if [ $? == 1 ]; then
+    return 1
+  fi
+
   print '#######################'
   print "## Running pronto... ##"
   print '#######################'
