@@ -98,8 +98,8 @@ function ppush ()
 
 function ppushtest ()
 {
+  test-or-create
   prontorun
-  spec-or-create
   pushandpr
 }
 
@@ -167,6 +167,13 @@ function test-or-create ()
   print '##########################'
 
   ruby ~/Developer/dotfiles/rspecer.rb
+
+  if [ $? == 1 ]; then
+    print "${RED}Oops, a spec seems to be red or empty, be sure to complete it before you push${NORMAL}"
+    return 1
+  else
+    print "${GREEN}Every spec operational, passing to the next step!${NORMAL}"
+  fi
 }
 
 export BUNDLER_EDITOR="'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'"
