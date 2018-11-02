@@ -91,7 +91,7 @@ NORMAL='\033[0m'
 
 function ppush ()
 {
-  prontorun
+  prontorunlight
   pushandpr
 }
 
@@ -101,6 +101,12 @@ function ppushtest ()
   test-or-create
   prontorun
   pushandpr
+}
+
+function prontotest ()
+{
+  test-or-create
+  prontorun
 }
 
 function pushandpr ()
@@ -122,6 +128,22 @@ function pushandpr ()
     if [ $? == 0 ]; then
       open "https://github.com/KissKissBankBank/kisskissbankbank/pull/new/$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)"
     fi
+  fi
+}
+
+function prontorunlight ()
+{
+  print '#######################'
+  print "## Running pronto... ##"
+  print '#######################'
+
+  be pronto run --exit-code
+
+  if [ $? != 0 ]; then
+    print "${RED}Pronto found somme errors... Fix them before pushing to master!${NORMAL}"
+    return 1
+  else
+    print "${GREEN}No errors found by pronto, go for next step!${NORMAL}"
   fi
 }
 

@@ -33,18 +33,18 @@ class AnalyzeModifiedFiles
 
   def analyze_file(f)
     if f.match(/app\/.*\.rb$/)
-      puts "New file found, searching for specs..."
+      puts "#{f} has been modified, searching for specs..."
 
       spec_path = f.gsub('app/', 'spec/').gsub('.rb', '_spec.rb')
 
       if File.exists?(spec_path)
-        puts "spec found for file #{f}, putting #{spec_path} in the list of specs to run"
+        puts "Spec found for #{f}, putting #{spec_path} in the list of specs to run"
         specs_to_execute << spec_path
       else
         create_new_spec(spec_path, f)
       end
     elsif f.match(/spec\/(?!factories)/) && !specs_to_execute.include?(f)
-      puts "new spec found, putting #{f} in the list of specs to run"
+      puts "#{f} modified, putting it in the list of specs to run"
       specs_to_execute << f
     end
   end
