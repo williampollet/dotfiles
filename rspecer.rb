@@ -1,10 +1,11 @@
 class AnalyzeModifiedFiles
-  def initialize(test_command:, create_specs: true)
+  def initialize(test_command:, create_specs: true, files_to_skip: [])
     @modified_files = `git diff --name-status master | egrep -h "^M|^A" | cut -c 3-`.split("\n")
     @moved_files = `git diff --name-status master | egrep -h "^R"`.split("\n")
     @test_command = test_command
     @specs_to_execute = []
     @create_specs = create_specs
+    @files_to_skip = files_to_skip
   end
 
   def call
@@ -32,7 +33,7 @@ class AnalyzeModifiedFiles
   end
 
   def analyze_file(f)
-    if f.match(/app\/.*\.rb$/)
+    if f.match(/app\/.*\.rb$/) && !f.match(files_to_skip)
       puts "#{f} has been modified, searching for specs..."
 
       spec_path = f.gsub('app/', 'spec/').gsub('.rb', '_spec.rb')
@@ -43,7 +44,7 @@ class AnalyzeModifiedFiles
       else
         create_new_spec(spec_path, f)
       end
-    elsif f.match(/spec\/(?!factories)/) && !specs_to_execute.include?(f)
+    elsif !specs_to_execute.include?(f) && !f.match(files_to_skip)
       puts "#{f} modified, putting it in the list of specs to run"
       specs_to_execute << f
     end
@@ -76,6 +77,31 @@ class AnalyzeModifiedFiles
     class_name = File.basename(spec_path).gsub('_spec.rb', '').split('_').map(&:capitalize).join
     template = "require \'rails_helper\'\n\nRSpec.describe #{class_name} do\nend"
   end
+
+  def files_to_skip
+    Regexp.new(@files_to_skip.join('|').gsub('/', '\/'))
+  end
 end
 
-AnalyzeModifiedFiles.new(test_command: 'zeus test').call
+files_to_skip = %w[
+  app/mailer_previews
+  app/admin
+  spec/rails_helper
+  spec/simplecov_helper
+  spec/factories
+  lib/
+  bin/
+  client/
+  db/
+  app/views/
+  config
+  .rubocop.yml
+  circle.yml
+  Gemfile
+  Gemfile.lock
+]
+
+AnalyzeModifiedFiles.new(
+  test_command: 'zeus test',
+  files_to_skip: files_to_skip,
+).call
