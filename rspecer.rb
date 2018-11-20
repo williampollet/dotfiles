@@ -86,6 +86,7 @@ end
 files_to_skip = %w[
   app/mailer_previews
   app/admin
+  app/helpers/active_admin
   spec/rails_helper
   spec/simplecov_helper
   spec/factories
