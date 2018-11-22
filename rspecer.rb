@@ -103,6 +103,6 @@ files_to_skip = %w[
 ]
 
 AnalyzeModifiedFiles.new(
-  test_command: 'bundle exec rspec',
+  test_command: 'CIRCLE_USERNAME=williampollet rspec',
   files_to_skip: files_to_skip,
 ).call
