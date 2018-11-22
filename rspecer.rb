@@ -103,6 +103,6 @@ files_to_skip = %w[
 ]
 
 AnalyzeModifiedFiles.new(
-  test_command: 'zeus test',
+  test_command: 'bundle exec rspec',
   files_to_skip: files_to_skip,
 ).call
