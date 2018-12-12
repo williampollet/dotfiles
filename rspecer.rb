@@ -86,10 +86,12 @@ end
 files_to_skip = %w[
   app/mailer_previews
   app/admin
+  app/assets
   app/helpers/active_admin
   spec/rails_helper
   spec/simplecov_helper
   spec/factories
+  spec/fixtures
   lib/
   bin/
   client/
@@ -103,6 +105,6 @@ files_to_skip = %w[
 ]
 
 AnalyzeModifiedFiles.new(
-  test_command: 'CIRCLE_USERNAME=williampollet rspec',
+  test_command: 'CIRCLE_USERNAME=williampollet bundle exec rspec',
   files_to_skip: files_to_skip,
 ).call
