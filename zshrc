@@ -47,6 +47,7 @@ alias g='git'
 alias b='bundle'
 alias push='git push origin'
 alias check='git checkout'
+alias gcb='git checkout -b'
 alias pm='git pull origin master'
 alias telex='ssh william_pollet@52.30.18.32'
 alias kisskissprod='ssh william_pollet@34.246.225.85'
@@ -76,6 +77,13 @@ alias delete-squashed-branches='python ~/Developer/dotfiles/delete-squashed-bran
 alias lightboot='cd ~/Developer/dotfiles && osascript ./lightboot.scpt'
 alias stashtrads='git checkout config/locales/'
 
+alias ppushtest='safepush ppushtest'
+alias ppush='safepush ppush'
+alias prontorun='safepush prontorun'
+alias ptest='safepush ptest'
+alias pushandpr='safepush pushandpr'
+alias test='safepush test'
+
 function ls ()
 {
    clear
@@ -90,27 +98,27 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NORMAL='\033[0m'
 
-function ppush ()
+function manualppush ()
 {
   prontorunlight
   pushandpr
 }
 
 
-function ppushtest ()
+function manualppushtest ()
 {
   test-or-create
   prontorun
   pushandpr
 }
 
-function prontotest ()
+function manualprontotest ()
 {
   test-or-create
   prontorun
 }
 
-function pushandpr ()
+function manualpushandpr ()
 {
   if [ $? == 1 ]; then
     return 1
@@ -148,7 +156,7 @@ function prontorunlight ()
   fi
 }
 
-function prontorun ()
+function manualprontorun ()
 {
   if [ $? == 1 ]; then
     return 1
@@ -168,7 +176,7 @@ function prontorun ()
   fi
 }
 
-function spec-or-create ()
+function manualspec-or-create ()
 {
   if [ $? == 1 ]; then
     return 1
@@ -187,7 +195,7 @@ function spec-or-create ()
   fi
 }
 
-function test-or-create ()
+function manualtest-or-create ()
 {
   print '##########################'
   print "## Testing new files... ##"
