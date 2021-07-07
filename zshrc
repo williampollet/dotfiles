@@ -11,12 +11,18 @@ plugins=(gitfast last-working-dir common-aliases sublime zsh-syntax-highlighting
 export HOMEBREW_NO_ANALYTICS=1
 export PATH='~/.rbenv/shims:/usr/local/bin:/usr/local/share:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin:/usr/local/share/npm/bin:/usr/X11/bin:/usr/texbin:~/bin'
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin
+export PATH=$PATH:/Users/williampollet/Library/Python/2.7/bin
 export EC2_HOME=/usr/local/ec2/ec2-api-tools-1.7.2.4
 export PATH=$PATH:$EC2_HOME/bin
 export DB_HOST_ADDR=192.168.59.103
 export DB_HOST_PORT=5432
 export API_REDIS_1_PORT_6379_TCP_ADDR=127.0.0.1
 export API_REDIS_1_PORT_6379_TCP_PORT=6379
+export GEMFURY_USER="kisskissbankbankandco"
+export GEMFURY_API_TOKEN="FqDmiHzsLMUx9zFWoRrR"
+export TELEX_HOST="http://52.30.18.32"
+export TELEX_TOKEN=e4817a1410aeccc4f1294259a80f00d9195cd06d4619c7324432ea8fe3ccb67e
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 
 # Actually load Oh-My-Zsh
 source "${ZSH}/oh-my-zsh.sh"
@@ -38,6 +44,11 @@ export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export PATH=$PATH:/usr/local/mysql/bin
 export DYLD_LIBRARY_PATH=/usr/local/mysql/lib:$DYLD_LIBRARY_PATH
+export PGDATA=
+
+# gringotts config
+export GRINGOTTS_TOKEN=williampollet
+export SANDBOX_PASSPHRASE=bUNbmkwiqo8CV3ienigfgjvSmGSJ4NJQFHAuVrXBwwTH6har0v
 
 
 # aliases
@@ -48,6 +59,7 @@ alias b='bundle'
 alias push='git push origin'
 alias check='git checkout'
 alias gcb='git checkout -b'
+alias gsquash='gpom && git reset --soft origin/master'
 alias pm='git pull origin master'
 alias telex='ssh william_pollet@52.30.18.32'
 alias kisskissprod='ssh william_pollet@34.246.225.85'
